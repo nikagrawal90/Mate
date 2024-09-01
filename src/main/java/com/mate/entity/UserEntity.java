@@ -36,6 +36,7 @@ public class UserEntity {
     private List<Album> albums;
     private Religion religion;
     private RelationshipStatus relationshipStatus;
+    private Boolean isActive = true;
 
 
     // location will be sent from UI for user

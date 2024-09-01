@@ -5,5 +5,6 @@ public enum EventStatus {
     FAILED,
     PENDING,
     IN_PROGRESS,
-    CANCELLED
+    CANCELLED,
+    DELETED
 }

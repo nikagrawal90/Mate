@@ -15,6 +15,7 @@ public class BookingEntity {
     private String eventId;
     private String userId;
     private String paymentId;
+    private Double bookingAmount;
     private Status status;
     private Timestamp bookingTimestamp;
 }

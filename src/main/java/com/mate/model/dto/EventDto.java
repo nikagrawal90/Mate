@@ -4,6 +4,7 @@ import com.mate.entity.UserEntity;
 import com.mate.entity.enums.EventSize;
 import com.mate.entity.enums.EventStatus;
 import com.mate.entity.enums.EventType;
+import com.mate.model.RefundPolicy;
 import lombok.Data;
 import org.springframework.data.geo.Point;
 
@@ -18,5 +19,8 @@ public class EventDto {
     private EventStatus eventStatus;
     private String hostId;
     private Point location;
+    private Double joiningFee;
+    private Integer capacity;
+    private RefundPolicy refundPolicy;
     private List<UserEntity> attendees;
 }

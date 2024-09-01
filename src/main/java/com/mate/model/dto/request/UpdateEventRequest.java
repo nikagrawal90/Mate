@@ -11,4 +11,5 @@ public class UpdateEventRequest {
     private String requesterId;
     private EventStatus eventStatus;
     private Point location;
+    private Integer capacity;
 }

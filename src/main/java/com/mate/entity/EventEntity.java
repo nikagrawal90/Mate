@@ -26,6 +26,7 @@ public class EventEntity {
     private EventStatus eventStatus;
     private Double joiningFee;
     private RefundPolicy refundPolicy;
+    private Integer capacity;
 
     private String hostId;
     private Point location;

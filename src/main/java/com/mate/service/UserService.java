@@ -31,7 +31,7 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
-        List<UserEntity> userEntities = userRepository.findAll();
+        List<UserEntity> userEntities = userRepository.findAllActiveUsers();
         List<UserDto> userDtos = new ArrayList<>();
         userEntities.forEach(userEntity -> {
             UserDto userDto = new UserDto();
@@ -48,7 +48,9 @@ public class UserService {
 
     public void deleteUser(String userId) throws UserNotFoundException {
         if(userRepository.findById(userId).isPresent()) {
-            userRepository.deleteById(userId);
+            UserEntity userEntity = getUserById(userId);
+            userEntity.setIsActive(false);
+            userRepository.save(userEntity);
         } else {
             throw new UserNotFoundException(String.format("User=%s not found", userId));
         }

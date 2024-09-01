@@ -1,18 +1,11 @@
 package com.mate.controller;
 
 import com.mate.model.dto.UserDto;
-import com.mate.model.dto.request.UserDeleteRequest;
-import com.mate.model.dto.request.UserLoginRequest;
-import com.mate.model.dto.response.CreateUserResponse;
-import com.mate.model.dto.response.ErrorResponse;
 import com.mate.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -25,7 +18,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
         try {
-            return ResponseEntity.ok(CreateUserResponse.builder().userId(userService.registerUser(userDto).getId()).build());
+            return ResponseEntity.ok(userService.registerUser(userDto).getId());
         } catch (Exception e) {
             String errMsg = String.format("Error creating user=%s with error=%s", userDto.getName(), e.getMessage());
             log.error(errMsg);
@@ -37,8 +30,6 @@ public class UserController {
 //    public UserDto loginUser(@RequestBody UserLoginRequest userLoginRequest) {
 //
 //    }
-
-
 
     @GetMapping("getAllUsers")
     public ResponseEntity<?> getAllUsers() {

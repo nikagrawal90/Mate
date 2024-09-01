@@ -5,18 +5,23 @@ import com.mate.entity.PaymentDetailsEntity;
 import com.mate.entity.UserEntity;
 import com.mate.entity.enums.Status;
 import com.mate.exception.*;
+import com.mate.model.dto.response.RefundDetailsResponse;
 import com.mate.repository.PaymentRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 
 @Service
+@Log4j2
 public class PaymentService {
     private static final Integer EXPIRATION_TIME_IN_MINUTES = 15;
 
     @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private BookingService bookingService;
 
     public void verifyPaymentForEvent(String paymentId, UserEntity userEntity, EventEntity eventEntity, String bookingId) throws PaymentDetailsNotFoundException, PaymentDetailsMismatchException, InsufficientAmountException, PaymentExpiredException, PaymentFailedException {
         PaymentDetailsEntity paymentDetailsEntity = paymentRepository.findById(paymentId).orElseThrow(() -> new PaymentDetailsNotFoundException(String.format("Payment=%s not found", paymentId)));
@@ -53,12 +58,29 @@ public class PaymentService {
         return timestampToCheck.before(thresholdTimestamp);
     }
 
-    public void initiateRefund(String paymentId) {
+    public void initiateRefund(String paymentId) throws PaymentDetailsNotFoundException, BookingNotFoundException, EventNotFoundException {
+        PaymentDetailsEntity paymentDetails = getPaymentDetailsById(paymentId);
+        RefundDetailsResponse refundDetailsResponse = bookingService.getRefundDetails(paymentDetails.getBookingId());
+
+        // Initiate refund with Payment Gateway
+        updatePaymentStatus(paymentDetails, Status.REFUNDED);
     }
 
     public PaymentDetailsEntity getPaymentDetailsById(String paymentId) throws PaymentDetailsNotFoundException {
         return paymentRepository.findById(paymentId).orElseThrow(() -> new PaymentDetailsNotFoundException(String.format("PaymentDetails with paymentId=%s not found", paymentId)));
+    }
 
+    public void updatePaymentStatus(PaymentDetailsEntity paymentDetails, Status paymentStatus) throws BookingNotFoundException, PaymentDetailsNotFoundException, EventNotFoundException {
+        paymentDetails.setPaymentStatus(paymentStatus);
+        paymentRepository.save(paymentDetails);
 
+        if(paymentStatus.equals(Status.SUCCESS) || paymentStatus.equals(Status.FAILED) || paymentStatus.equals(Status.CANCELLED)) {
+            try {
+                bookingService.updateBookingStatus(paymentDetails.getBookingId(), paymentStatus);
+            } catch (InvalidBookingStateException e) {
+                log.error("Error updating booking status - " + e.getMessage());
+                initiateRefund(paymentDetails.getPaymentId());
+            }
+        }
     }
 }
