@@ -6,7 +6,7 @@ import org.springframework.data.geo.Point;
 
 @Data
 public class UpdateEventRequest {
-    private String name;
+    private String eventName;
     private String eventId;
     private String requesterId;
     private EventStatus eventStatus;

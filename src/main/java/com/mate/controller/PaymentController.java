@@ -1,15 +1,13 @@
 package com.mate.controller;
 
 import com.mate.entity.PaymentDetailsEntity;
+import com.mate.model.dto.PaymentDetailsDto;
 import com.mate.model.dto.request.PaymentStatusNotificationRequest;
 import com.mate.service.PaymentService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/payment")
@@ -19,8 +17,19 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
+    @PostMapping("/createPaymentInstance")
+    public ResponseEntity<?> createPaymentInstance(@RequestBody PaymentDetailsDto paymentDetailsDto) {
+        try {
+            return ResponseEntity.ok(paymentService.createPaymentInstance(paymentDetailsDto));
+        } catch (Exception e) {
+            String errMsg = "Error creating payment instance" + e.getMessage();
+            log.error(errMsg);
+            return ResponseEntity.internalServerError().body(errMsg);
+        }
+    }
+
     @PostMapping("/webhook")
-    public ResponseEntity<String> paymentStatusWebhook(PaymentStatusNotificationRequest paymentStatusNotificationRequest) {
+    public ResponseEntity<String> paymentStatusWebhook(@RequestBody PaymentStatusNotificationRequest paymentStatusNotificationRequest) {
         // verify from Payment Gateway if verification fails publish a metric
 
         try {

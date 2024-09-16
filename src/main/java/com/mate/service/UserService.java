@@ -26,7 +26,7 @@ public class UserService {
         userRepository.save(userEntity);
         System.out.println("After saving user entity: " + userEntity);
 
-        userDto.setId(userEntity.getUserId());
+        userDto.setUserId(userEntity.getUserId());
         return userDto;
     }
 

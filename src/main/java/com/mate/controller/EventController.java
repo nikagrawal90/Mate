@@ -63,7 +63,7 @@ public class EventController {
         }
     }
 
-    @PostMapping("/updateEvent")
+    @PutMapping("/updateEvent")
     public ResponseEntity<?> updateEvent(@RequestBody UpdateEventRequest updateEventRequest) {
         try {
             EventDto eventDto = eventService.updateEvent(updateEventRequest);

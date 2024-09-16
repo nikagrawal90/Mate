@@ -1,5 +1,8 @@
 package com.mate.controller;
 
+import com.mate.entity.enums.Status;
+import com.mate.exception.BookingNotFoundException;
+import com.mate.exception.InvalidBookingStateException;
 import com.mate.model.dto.BookingDto;
 import com.mate.model.dto.request.ConfirmBookingRequest;
 import com.mate.model.dto.response.RefundDetailsResponse;
@@ -65,12 +68,24 @@ public class BookingController {
     }
 
     @GetMapping("/getRefundDetails")
-    public ResponseEntity<?> getRefundDetails(@RequestBody String bookingId) {
+    public ResponseEntity<?> getRefundDetails(@RequestParam String bookingId) {
         try {
             RefundDetailsResponse refundDetailsResponse = bookingService.getRefundDetails(bookingId);
             return ResponseEntity.ok(refundDetailsResponse);
         } catch (Exception e) {
             String errMsg = String.format("Error getting refund details for booking %s - %s", bookingId, e.getMessage());
+            log.error(errMsg, e);
+            return ResponseEntity.internalServerError().body(errMsg);
+        }
+    }
+
+    @PutMapping("/updateBooking")
+    public ResponseEntity<?> updateBookingStatus(@RequestParam String bookingId, @RequestParam Status status) {
+        try {
+            bookingService.updateBookingStatus(bookingId, status);
+            return ResponseEntity.ok("Updated Booking status for id - " + bookingId);
+        } catch (InvalidBookingStateException | BookingNotFoundException e) {
+            String errMsg = String.format("Error updating status for booking %s - %s", bookingId, e.getMessage());
             log.error(errMsg, e);
             return ResponseEntity.internalServerError().body(errMsg);
         }

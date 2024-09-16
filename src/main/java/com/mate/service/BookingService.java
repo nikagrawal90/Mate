@@ -42,6 +42,7 @@ public class BookingService {
         bookingEntity.setStatus(Status.PENDING);
         bookingRepository.save(bookingEntity);
         bookingDto.setBookingId(bookingEntity.getBookingId());
+        bookingDto.setStatus(bookingEntity.getStatus());
 
         return bookingDto;
     }
@@ -54,9 +55,11 @@ public class BookingService {
         BookingEntity bookingEntity = getBookingById(confirmBookingRequest.getBookingId());
         UserEntity userEntity = userService.getUserById(bookingEntity.getUserId());
         EventEntity eventEntity = eventService.getEventById(bookingEntity.getEventId());
+        Double bookingAmount = paymentService.getPaymentDetailsById(confirmBookingRequest.getPaymentId()).getAmount();
 
         paymentService.verifyPaymentForEvent(confirmBookingRequest.getPaymentId(), userEntity, eventEntity, confirmBookingRequest.getBookingId());
 
+        bookingEntity.setBookingAmount(bookingAmount);
         bookingEntity.setStatus(Status.SUCCESS);
     }
 

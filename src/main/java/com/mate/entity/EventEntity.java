@@ -20,7 +20,7 @@ import java.util.List;
 public class EventEntity {
     @Id
     private String eventId;
-    private String name;
+    private String eventName;
     private EventSize eventSize;
     private EventType eventType;
     private EventStatus eventStatus;

@@ -9,5 +9,6 @@ public class BookingDto {
     private String eventId;
     private String userId;
     private String paymentId;
+    private Double bookingAmount;
     private Status status;
 }

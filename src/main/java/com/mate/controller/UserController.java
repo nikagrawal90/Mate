@@ -18,7 +18,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
         try {
-            return ResponseEntity.ok(userService.registerUser(userDto).getId());
+            return ResponseEntity.ok(userService.registerUser(userDto).getUserId());
         } catch (Exception e) {
             String errMsg = String.format("Error creating user=%s with error=%s", userDto.getName(), e.getMessage());
             log.error(errMsg);
@@ -31,7 +31,7 @@ public class UserController {
 //
 //    }
 
-    @GetMapping("getAllUsers")
+    @GetMapping("/getAllUsers")
     public ResponseEntity<?> getAllUsers() {
         try {
             return ResponseEntity.ok(userService.getAllUsers());

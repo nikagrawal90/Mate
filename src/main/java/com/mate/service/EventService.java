@@ -25,6 +25,8 @@ public class EventService {
         EventEntity eventEntity = new EventEntity();
         BeanUtils.copyProperties(eventDto, eventEntity);
 
+        eventEntity.setEventStatus(EventStatus.PENDING);
+
         eventRepository.save(eventEntity);
 
         return eventEntity.getEventId();
@@ -75,10 +77,10 @@ public class EventService {
         if(oldEventEntityOptional.isPresent()){
             EventEntity oldEventEntity = oldEventEntityOptional.get();
             if(oldEventEntity.getHostId().equals(updateEventRequest.getRequesterId())) {
-                oldEventEntity.setEventStatus(updateEventRequest.getEventStatus());
-                oldEventEntity.setLocation(updateEventRequest.getLocation());
-                oldEventEntity.setName(updateEventRequest.getName());
-                oldEventEntity.setCapacity(updateEventRequest.getCapacity());
+                if(updateEventRequest.getEventStatus() != null) oldEventEntity.setEventStatus(updateEventRequest.getEventStatus());
+                if(updateEventRequest.getLocation() != null) oldEventEntity.setLocation(updateEventRequest.getLocation());
+                if(updateEventRequest.getEventName() != null) oldEventEntity.setEventName(updateEventRequest.getEventName());
+                if(updateEventRequest.getCapacity() != null) oldEventEntity.setCapacity(updateEventRequest.getCapacity());
                 eventRepository.save(oldEventEntity);
 
                 String responseMessage = "Updated event with id=" + updateEventRequest.getEventId();

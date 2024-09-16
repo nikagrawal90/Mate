@@ -6,6 +6,5 @@ import lombok.Data;
 @Data
 public class PaymentStatusNotificationRequest {
     private String paymentId;
-    private String bookingId;
     private Status paymentStatus;
 }
